@@ -10,12 +10,11 @@ export async function POST(request: NextRequest) {
     const nome = formData.get("nome") as string
     const email = formData.get("email") as string
     const telefone = formData.get("telefone") as string
-    const cidade = formData.get("cidade") as string
     const plataforma = formData.get("plataforma") as string
     const printApp = formData.get("printApp") as File | null
 
     // Validação básica
-    if (!nome || !email || !telefone || !cidade || !plataforma) {
+    if (!nome || !email || !telefone || !plataforma) {
       return NextResponse.json(
         { error: "Todos os campos obrigatórios devem ser preenchidos" },
         { status: 400 }
@@ -85,10 +84,6 @@ export async function POST(request: NextRequest) {
                 <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #1e293b;">
                   <a href="https://wa.me/55${telefone.replace(/\D/g, "")}" style="color: #22c55e; text-decoration: none;">${telefone}</a>
                 </td>
-              </tr>
-              <tr>
-                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b;">Cidade</td>
-                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #1e293b;">${cidade}</td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b;">Plataforma</td>
