@@ -5,13 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
   Upload,
   CheckCircle,
   X,
@@ -20,42 +13,15 @@ import {
   Sparkles,
 } from "lucide-react"
 
-const cities = [
-  "Belo Horizonte",
-  "Contagem",
-  "Betim",
-  "Nova Lima",
-  "Ribeirão das Neves",
-  "Santa Luzia",
-  "Sabará",
-  "Ibirité",
-  "Outra",
-]
-
-const apps = [
-  { value: "uber", label: "Uber" },
-  { value: "99", label: "99" },
-  { value: "indrive", label: "InDrive" },
-  { value: "cabify", label: "Cabify" },
-  { value: "multiple", label: "Múltiplos Apps" },
-  { value: "other", label: "Outro" },
-]
-
 interface FormData {
   nome: string
   email: string
-  whatsapp: string
-  cidade: string
-  app: string
 }
 
 export function RegistrationForm() {
   const [formData, setFormData] = useState<FormData>({
     nome: "",
     email: "",
-    whatsapp: "",
-    cidade: "",
-    app: "",
   })
   const [file, setFile] = useState<File | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
@@ -70,18 +36,6 @@ export function RegistrationForm() {
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }))
     }
-  }
-
-  const formatWhatsApp = (value: string) => {
-    const numbers = value.replace(/\D/g, "")
-    if (numbers.length <= 2) return numbers
-    if (numbers.length <= 7) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`
-  }
-
-  const handleWhatsAppChange = (value: string) => {
-    const formatted = formatWhatsApp(value)
-    handleInputChange("whatsapp", formatted)
   }
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -118,13 +72,6 @@ export function RegistrationForm() {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "E-mail inválido"
     }
-    if (!formData.whatsapp.trim()) {
-      newErrors.whatsapp = "WhatsApp é obrigatório"
-    } else if (formData.whatsapp.replace(/\D/g, "").length < 10) {
-      newErrors.whatsapp = "WhatsApp inválido"
-    }
-    if (!formData.cidade) newErrors.cidade = "Cidade é obrigatória"
-    if (!formData.app) newErrors.app = "Selecione o aplicativo"
     if (!file) newErrors.file = "O print do app é obrigatório"
 
     setErrors(newErrors)
@@ -143,13 +90,7 @@ export function RegistrationForm() {
       const submitData = new FormData()
       submitData.append("nome", formData.nome)
       submitData.append("email", formData.email)
-      submitData.append("telefone", formData.whatsapp)
-      submitData.append("cpf", "-") // Campo não existe no formulário atual
-      submitData.append("veiculo", "-") // Campo não existe no formulário atual
-      submitData.append("placa", "-") // Campo não existe no formulário atual
-      submitData.append("plataforma", formData.app)
-      submitData.append("cidade", formData.cidade)
-      
+
       if (file) {
         submitData.append("printApp", file)
       }
@@ -169,8 +110,8 @@ export function RegistrationForm() {
     } catch (error) {
       console.error("[v0] Submit error:", error)
       setSubmitError(
-        error instanceof Error 
-          ? error.message 
+        error instanceof Error
+          ? error.message
           : "Erro ao enviar formulário. Tente novamente."
       )
     } finally {
@@ -191,12 +132,12 @@ export function RegistrationForm() {
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
               Recebemos sua solicitação e nossa equipe irá analisar seus dados.
-              Você receberá uma resposta via WhatsApp em até 24 horas.
+              Você receberá uma resposta via e-mail em até 24 horas.
             </p>
             <div className="bg-card border border-border rounded-2xl p-6">
               <Sparkles className="w-8 h-8 text-primary mx-auto mb-4" />
               <p className="text-foreground font-medium">
-                Fique atento às mensagens no WhatsApp cadastrado!
+                Fique atento ao e-mail cadastrado!
               </p>
             </div>
           </div>
@@ -263,88 +204,6 @@ export function RegistrationForm() {
                 {errors.email && (
                   <p className="text-sm text-destructive">{errors.email}</p>
                 )}
-              </div>
-
-              {/* WhatsApp */}
-              <div className="space-y-2">
-                <Label htmlFor="whatsapp" className="text-foreground font-medium">
-                  WhatsApp <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="whatsapp"
-                  type="tel"
-                  placeholder="(31) 99999-9999"
-                  value={formData.whatsapp}
-                  onChange={(e) => handleWhatsAppChange(e.target.value)}
-                  maxLength={15}
-                  className={`h-12 bg-input border-border rounded-xl ${
-                    errors.whatsapp ? "border-destructive" : ""
-                  }`}
-                />
-                {errors.whatsapp && (
-                  <p className="text-sm text-destructive">{errors.whatsapp}</p>
-                )}
-              </div>
-
-              {/* Cidade e App em Grid */}
-              <div className="grid sm:grid-cols-2 gap-6">
-                {/* Cidade */}
-                <div className="space-y-2">
-                  <Label className="text-foreground font-medium">
-                    Cidade <span className="text-destructive">*</span>
-                  </Label>
-                  <Select
-                    value={formData.cidade}
-                    onValueChange={(value) => handleInputChange("cidade", value)}
-                  >
-                    <SelectTrigger
-                      className={`h-12 bg-input border-border rounded-xl ${
-                        errors.cidade ? "border-destructive" : ""
-                      }`}
-                    >
-                      <SelectValue placeholder="Selecione sua cidade" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {cities.map((city) => (
-                        <SelectItem key={city} value={city}>
-                          {city}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.cidade && (
-                    <p className="text-sm text-destructive">{errors.cidade}</p>
-                  )}
-                </div>
-
-                {/* App */}
-                <div className="space-y-2">
-                  <Label className="text-foreground font-medium">
-                    Aplicativo <span className="text-destructive">*</span>
-                  </Label>
-                  <Select
-                    value={formData.app}
-                    onValueChange={(value) => handleInputChange("app", value)}
-                  >
-                    <SelectTrigger
-                      className={`h-12 bg-input border-border rounded-xl ${
-                        errors.app ? "border-destructive" : ""
-                      }`}
-                    >
-                      <SelectValue placeholder="Qual app você usa?" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {apps.map((app) => (
-                        <SelectItem key={app.value} value={app.value}>
-                          {app.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.app && (
-                    <p className="text-sm text-destructive">{errors.app}</p>
-                  )}
-                </div>
               </div>
 
               {/* Upload */}
