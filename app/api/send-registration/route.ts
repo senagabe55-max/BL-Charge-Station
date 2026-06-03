@@ -9,12 +9,10 @@ export async function POST(request: NextRequest) {
     
     const nome = formData.get("nome") as string
     const email = formData.get("email") as string
-    const telefone = formData.get("telefone") as string
-    const plataforma = formData.get("plataforma") as string
     const printApp = formData.get("printApp") as File | null
 
     // Validação básica
-    if (!nome || !email || !telefone || !plataforma) {
+    if (!nome || !email) {
       return NextResponse.json(
         { error: "Todos os campos obrigatórios devem ser preenchidos" },
         { status: 400 }
@@ -35,20 +33,10 @@ export async function POST(request: NextRequest) {
       ]
     }
 
-    // Formatar a plataforma para exibição
-    const plataformaFormatada: Record<string, string> = {
-      uber: "Uber",
-      "99": "99",
-      indrive: "InDrive",
-      cabify: "Cabify",
-      multiple: "Múltiplos Apps",
-      other: "Outro",
-    }
-
     // Enviar email
     const { data, error } = await resend.emails.send({
       from: "BL Charge Station <onboarding@resend.dev>",
-      to: ["senagabe55@gmail.com"],
+      to: ["Alex.cef@outlook.com"],
       subject: "novo formulário preenchido (QR Code)",
       html: `
         <!DOCTYPE html>
@@ -77,18 +65,6 @@ export async function POST(request: NextRequest) {
                 <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b;">E-mail</td>
                 <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #1e293b;">
                   <a href="mailto:${email}" style="color: #22c55e; text-decoration: none;">${email}</a>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b;">WhatsApp</td>
-                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #1e293b;">
-                  <a href="https://wa.me/55${telefone.replace(/\D/g, "")}" style="color: #22c55e; text-decoration: none;">${telefone}</a>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b;">Plataforma</td>
-                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #1e293b;">
-                  <span style="background: #22c55e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px;">${plataformaFormatada[plataforma] || plataforma}</span>
                 </td>
               </tr>
             </table>
