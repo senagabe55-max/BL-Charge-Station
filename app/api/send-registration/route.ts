@@ -9,10 +9,11 @@ export async function POST(request: NextRequest) {
     
     const nome = formData.get("nome") as string
     const email = formData.get("email") as string
+    const telefone = formData.get("telefone") as string  // ← ADICIONADO
     const printApp = formData.get("printApp") as File | null
 
     // Validação básica
-    if (!nome || !email) {
+    if (!nome || !email || !telefone) {  // ← ADICIONADO telefone
       return NextResponse.json(
         { error: "Todos os campos obrigatórios devem ser preenchidos" },
         { status: 400 }
@@ -65,6 +66,13 @@ export async function POST(request: NextRequest) {
                 <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b;">E-mail</td>
                 <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #1e293b;">
                   <a href="mailto:${email}" style="color: #22c55e; text-decoration: none;">${email}</a>
+                </td>
+              </tr>
+              // ← ADICIONADO
+              <tr>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #64748b;">Telefone</td>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #1e293b;">
+                  <a href="tel:${telefone}" style="color: #22c55e; text-decoration: none;">${telefone}</a>
                 </td>
               </tr>
             </table>
