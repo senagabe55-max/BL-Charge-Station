@@ -16,12 +16,14 @@ import {
 interface FormData {
   nome: string
   email: string
+  telefone: string // ← ADICIONADO
 }
 
 export function RegistrationForm() {
   const [formData, setFormData] = useState<FormData>({
     nome: "",
     email: "",
+    telefone: "", // ← ADICIONADO
   })
   const [file, setFile] = useState<File | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
@@ -72,6 +74,12 @@ export function RegistrationForm() {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "E-mail inválido"
     }
+    // ← ADICIONADO
+    if (!formData.telefone.trim()) {
+      newErrors.telefone = "Telefone é obrigatório"
+    } else if (!/^\(?\d{2}\)?[\s-]?\d{4,5}-?\d{4}$/.test(formData.telefone.trim())) {
+      newErrors.telefone = "Telefone inválido"
+    }
     if (!file) newErrors.file = "O print do app é obrigatório"
 
     setErrors(newErrors)
@@ -90,6 +98,7 @@ export function RegistrationForm() {
       const submitData = new FormData()
       submitData.append("nome", formData.nome)
       submitData.append("email", formData.email)
+      submitData.append("telefone", formData.telefone) // ← ADICIONADO
 
       if (file) {
         submitData.append("printApp", file)
@@ -203,6 +212,26 @@ export function RegistrationForm() {
                 />
                 {errors.email && (
                   <p className="text-sm text-destructive">{errors.email}</p>
+                )}
+              </div>
+
+              {/* Telefone ← ADICIONADO */}
+              <div className="space-y-2">
+                <Label htmlFor="telefone" className="text-foreground font-medium">
+                  Telefone <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="telefone"
+                  type="tel"
+                  placeholder="(00) 00000-0000"
+                  value={formData.telefone}
+                  onChange={(e) => handleInputChange("telefone", e.target.value)}
+                  className={`h-12 bg-input border-border rounded-xl ${
+                    errors.telefone ? "border-destructive" : ""
+                  }`}
+                />
+                {errors.telefone && (
+                  <p className="text-sm text-destructive">{errors.telefone}</p>
                 )}
               </div>
 
