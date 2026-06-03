@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     // Enviar email
     const { data, error } = await resend.emails.send({
       from: "BL Charge Station <noreply@imperiodigitalmkt.com.br>",
-      to: ["Alex.cef@outlook.com"],
+      to: ["blchargercharger@gmail.com"],
       subject: "novo formulário preenchido (QR Code)",
       html: `
         <!DOCTYPE html>
